@@ -261,7 +261,7 @@ if df is not None:
     # Download section
     st.subheader("📥 Download Google Calendar")
     file_base = uploaded.name.rsplit(".", 1)[0] if uploaded else "data"
-    csv_bytes = my_schedule.to_csv(index=False).encode("utf_8_sig")
+    csv_bytes = my_google.to_csv(index=False).encode("utf_8_sig")
     st.download_button(
         label="Download my_google.csv",
         data=csv_bytes,
