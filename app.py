@@ -31,6 +31,62 @@ def _bytes_buffer(uploaded_file) -> io.BytesIO:
     data = uploaded_file.read()
     return io.BytesIO(data)
 
+from datetime import datetime, timedelta
+import sys
+
+# parse week pattern
+def parse_week_pattern(week_pattern):
+    """Parses the 'Week pattern' string and returns a list of active week numbers."""
+    active_weeks = []
+    for i, char in enumerate(week_pattern):
+        if char.isdigit():
+            active_weeks.append(i + 1) # Week number corresponds to index + 1
+    return active_weeks
+
+# extract date from the pattern
+def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
+    """Calculates the dates for each active week based on the start date and day of the week."""
+    dates = []
+    parsed = False
+    for fmt in ('%m/%d/%Y', '%m/%d/%y'):
+        try:
+            start_date = datetime.strptime(start_date_str, fmt)
+            parsed = True
+            break
+        except ValueError:
+            pass
+    if not parsed and sys.platform.startswith('win'):
+        for fmt in ('%#m/%#d/%Y', '%#m/%#d/%y'):
+            try:
+                start_date = datetime.strptime(start_date_str, fmt)
+                parsed = True
+                break
+            except ValueError:
+                pass
+    if not parsed:
+        raise ValueError(f"Could not parse date string: {start_date_str}")
+
+
+    # Adjust start date to the correct day of the week if needed
+    start_day_of_week = start_date.isoweekday() + 1 if start_date.isoweekday() != 7 else 8 # Monday is 2, Sunday is 8
+    days_difference = day_of_week - start_day_of_week
+    if days_difference < 0:
+      days_difference += 7
+    adjusted_start_date = start_date + timedelta(days=days_difference)
+
+    if not active_weeks:
+        return dates # Return empty list if no active weeks
+
+    firstweek = active_weeks[0]
+
+
+    for week_num in active_weeks:
+        # Calculate the date for the specific day of the week in the given week number
+        # Assuming the first week in the pattern corresponds to the week of the start date
+        date_of_week = adjusted_start_date + timedelta(weeks=week_num - firstweek)
+        dates.append(date_of_week)
+    return dates
+    
 uploaded = st.file_uploader(
     "Upload a .csv, .xlsx, or .xls file",
     type=["csv", "xlsx", "xls"],
@@ -80,12 +136,23 @@ if uploaded:
 df = st.session_state.df
 
 if df is not None:
-    st.subheader("👀 Your EGOV Schedule")
+    my_list = df
+    
+    #Display data section
+    st.subheader("👀 Your EGOV Schedule")    
     st.dataframe(df, use_container_width=True)
 
+    # Convert my schedule to google calendar schedule ---------------------------------------
+    
+    # Apply the helper functions to the DataFrame
+    my_list_2 = my_list.copy()
+    my_list_2['active_weeks'] = my_list_2['Week Pattern'].apply(parse_week_pattern)
+    my_list_2['class_dates'] = my_list_2.apply(lambda row: get_dates_for_pattern(row['Ngày bắt đầu'], row['Thứ'], row['active_weeks']), axis=1)
+
+    # Download section
     st.subheader("📥 Download Google Calendar")
     file_base = uploaded.name.rsplit(".", 1)[0] if uploaded else "data"
-    csv_bytes = df.to_csv(index=False).encode("utf_8_sig")
+    csv_bytes = my_list_2.to_csv(index=False).encode("utf_8_sig")
     st.download_button(
         label="Download my_google.csv",
         data=csv_bytes,
