@@ -146,7 +146,7 @@ if df is not None:
     
     # Apply the helper functions to the DataFrame
     my_list_2 = my_list.copy()
-    my_list_2['active_weeks'] = my_list_2['Week Pattern'].apply(parse_week_pattern)
+    my_list_2['active_weeks'] = my_list_2['Tuần học'].apply(parse_week_pattern)
     my_list_2['class_dates'] = my_list_2.apply(lambda row: get_dates_for_pattern(row['Ngày bắt đầu'], row['Thứ'], row['active_weeks']), axis=1)
 
     # Download section
