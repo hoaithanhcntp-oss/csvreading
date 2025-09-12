@@ -12,11 +12,11 @@ st.caption("Minimal app: upload a .csv / .xlsx / .xls and download as CSV.")
 def _read_csv(file) -> pd.DataFrame:
     # Try UTF-8 first; fallback to latin-1; else let pandas sniff the separator.
     try:
-        return pd.read_csv(file,skiprows=12)
+        return pd.read_csv(file)
     except UnicodeDecodeError:
         file.seek(0)
         try:
-            return pd.read_csv(file, skiprows=12, encoding="latin-1")
+            return pd.read_csv(file, encoding="latin-1")
         except Exception:
             file.seek(0)
             return pd.read_csv(file, sep=None, engine="python")
@@ -24,8 +24,8 @@ def _read_csv(file) -> pd.DataFrame:
 def _read_excel(file, suffix: str, sheet_name: Optional[str] = None) -> pd.DataFrame:
     # Use openpyxl for .xlsx and xlrd for .xls
     if suffix == ".xlsx":
-        return pd.read_excel(file, sheet_name=sheet_name, engine="openpyxl")
-    return pd.read_excel(file, sheet_name=sheet_name, engine="xlrd")
+        return pd.read_excel(file,skiprows=12, sheet_name=sheet_name, engine="openpyxl")
+    return pd.read_excel(file,skiprows=12, sheet_name=sheet_name, engine="xlrd")
 
 def _bytes_buffer(uploaded_file) -> io.BytesIO:
     data = uploaded_file.read()
