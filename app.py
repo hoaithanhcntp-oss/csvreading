@@ -47,7 +47,7 @@ def parse_week_pattern(week_pattern):
 def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
     """Calculates the dates for each active week based on the start date and day of the week."""
     dates = []
-
+    start_date = start_date_str
     """
     parsed = False
     for fmt in ('%m/%d/%Y', '%m/%d/%y'):
