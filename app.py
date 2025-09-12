@@ -271,3 +271,6 @@ if df is not None:
     )
 else:
     st.info("Upload a file to begin.")
+    
+st.markdown("---")
+st.caption("© Copyright by **Trinh Hoai Thanh**")
