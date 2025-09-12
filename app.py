@@ -1,9 +1,12 @@
-
 import io
 from typing import Optional, List
 
 import pandas as pd
 import streamlit as st
+
+from datetime import datetime, timedelta
+import sys
+
 
 st.set_page_config(page_title="Upload Excel/CSV → Download CSV", page_icon="📤", layout="wide")
 st.title("📤 Upload Excel/CSV → 📥 Download CSV")
@@ -30,9 +33,6 @@ def _read_excel(file, suffix: str, sheet_name: Optional[str] = None) -> pd.DataF
 def _bytes_buffer(uploaded_file) -> io.BytesIO:
     data = uploaded_file.read()
     return io.BytesIO(data)
-
-from datetime import datetime, timedelta
-import sys
 
 # parse week pattern
 def parse_week_pattern(week_pattern):
@@ -88,7 +88,50 @@ def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
         date_of_week = adjusted_start_date + timedelta(weeks=week_num - firstweek)
         dates.append(date_of_week)
     return dates
-    
+
+# Lecture sessions (with 25-min breaks after session 3 and 9)
+lecture_array = [
+    ("07:00", "07:45"),  # Session 1
+    ("07:45", "08:30"),  # Session 2
+    ("08:30", "09:15"),  # Session 3
+    ("09:40", "10:25"),  # Session 4
+    ("10:25", "11:10"),  # Session 5
+    ("11:10", "11:55"),  # Session 6
+    ("12:30", "13:15"),  # Session 7 (fixed start reset)
+    ("13:15", "14:00"),  # Session 8
+    ("14:00", "14:45"),  # Session 9
+    ("15:10", "15:55"),  # Session 10
+    ("15:55", "16:40"),  # Session 11
+    ("16:40", "17:25"),  # Session 12
+    ("18:00", "18:45"),  # Session 13 (fixed start reset)
+    ("18:45", "19:30"),  # Session 14
+    ("19:30", "20:15"),  # Session 15
+    ("20:15", "21:00"),  # Session 16
+    ("21:00", "21:45")   # Session 17
+]
+
+
+# Practice sessions (no breaks)
+practice_array = [
+    ("07:00", "07:45"),  # Session 1
+    ("07:45", "08:30"),  # Session 2
+    ("08:30", "09:15"),  # Session 3
+    ("09:15", "10:00"),  # Session 4
+    ("10:00", "10:45"),  # Session 5
+    ("10:45", "11:30"),  # Session 6
+    ("12:30", "13:15"),  # Session 7 (reset start)
+    ("13:15", "14:00"),  # Session 8
+    ("14:00", "14:45"),  # Session 9
+    ("14:45", "15:30"),  # Session 10
+    ("15:30", "16:15"),  # Session 11
+    ("16:15", "17:00"),  # Session 12
+    ("18:00", "18:45"),  # Session 13 (reset start)
+    ("18:45", "19:30"),  # Session 14
+    ("19:30", "20:15"),  # Session 15
+    ("20:15", "21:00"),  # Session 16
+    ("21:00", "21:45")   # Session 17
+]
+
 uploaded = st.file_uploader(
     "Upload a .csv, .xlsx, or .xls file",
     type=["csv", "xlsx", "xls"],
@@ -178,6 +221,42 @@ if df is not None:
 
     # Create the new DataFrame from the list of dictionaries
     my_schedule = pd.DataFrame(schedule_data)
+    
+    # Check practice or lecture session
+    my_schedule['IsPractice'] = 0
+    my_schedule.loc[my_schedule['Tên môn học'].str.contains('Thực hành', na=False), 'IsPractice'] = 1
+    my_schedule.loc[my_schedule['Tên môn học'].str.contains('Ứng dụng tin học', na=False), 'IsPractice'] = 1
+    # Convert 'Từ tiết' to 'From_time' and 'Đến tiết' to 'End_time' based on 'IsPractice'
+
+    # Convert to Start time and End time
+    my_schedule['Start time'] = my_schedule.apply(lambda row: practice_array[row['Từ tiết'] - 1][0] if row['IsPractice'] == 1 else lecture_array[row['Từ tiết'] - 1][0], axis=1)
+    my_schedule['End time'] = my_schedule.apply(lambda row: practice_array[row['Đến tiết'] - 1][1] if row['IsPractice'] == 1 else lecture_array[row['Đến tiết'] - 1][1], axis=1)
+
+    # Create the my_google dataframe
+    my_google = pd.DataFrame()
+
+    # Create the 'Subject' column by combining 'Tên môn học' and 'Mã lớp học phần'
+    my_google['Subject'] = my_schedule['Tên môn học'] + ' - ' + my_schedule['Mã lớp học phần'].astype(str) + ' - ' + my_schedule['Lớp']
+
+    # Create the 'Start Date' column from the 'Ngày' column
+    my_google['Start Date'] = my_schedule['Ngày'].dt.strftime('%m/%d/%Y')
+
+    my_google['Start Time'] = my_schedule['Start time']
+    my_google['End Date'] = my_google['Start Date']
+    my_google['End Time'] = my_schedule['End time']
+
+    # Create the 'Location' column from the 'Tên phòng' column
+    my_google['Location'] = my_schedule['Tên phòng']
+    my_google['Description'] = my_schedule['Tên phòng'] + ';\r\nTiết:' + my_schedule['Từ tiết'].astype(str) + '-' + my_schedule['Đến tiết'].astype(str) + ';\r\n' + my_google['Subject']
+
+    # Get today's date
+    today = datetime.now().date()
+
+    # Convert 'Start Date' column to datetime objects
+    my_google['Start Date'] = pd.to_datetime(my_google['Start Date'], format='%m/%d/%Y').dt.date
+
+    # Filter the DataFrame to keep only rows with 'Start Date' on or after today
+    my_google = my_google[my_google['Start Date'] >= today]
 
     # Download section
     st.subheader("📥 Download Google Calendar")
