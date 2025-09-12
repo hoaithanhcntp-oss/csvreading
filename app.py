@@ -47,6 +47,8 @@ def parse_week_pattern(week_pattern):
 def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
     """Calculates the dates for each active week based on the start date and day of the week."""
     dates = []
+
+    """
     parsed = False
     for fmt in ('%m/%d/%Y', '%m/%d/%y'):
         try:
@@ -65,7 +67,7 @@ def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
                 pass
     if not parsed:
         raise ValueError(f"Could not parse date string: {start_date_str}")
-
+    """
 
     # Adjust start date to the correct day of the week if needed
     start_day_of_week = start_date.isoweekday() + 1 if start_date.isoweekday() != 7 else 8 # Monday is 2, Sunday is 8
