@@ -48,26 +48,26 @@ def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
     """Calculates the dates for each active week based on the start date and day of the week."""
     dates = []
     start_date = start_date_str
-    """
-    parsed = False
-    for fmt in ('%m/%d/%Y', '%m/%d/%y'):
-        try:
-            start_date = datetime.strptime(start_date_str, fmt)
-            parsed = True
-            break
-        except ValueError:
-            pass
-    if not parsed and sys.platform.startswith('win'):
-        for fmt in ('%#m/%#d/%Y', '%#m/%#d/%y'):
-            try:
-                start_date = datetime.strptime(start_date_str, fmt)
-                parsed = True
-                break
-            except ValueError:
-                pass
-    if not parsed:
-        raise ValueError(f"Could not parse date string: {start_date_str}")
-    """
+    # remove this from streamlit
+    #parsed = False
+    #for fmt in ('%m/%d/%Y', '%m/%d/%y'):
+    #    try:
+    #        start_date = datetime.strptime(start_date_str, fmt)
+    #        parsed = True
+    #        break
+    #    except ValueError:
+    #        pass
+    #if not parsed and sys.platform.startswith('win'):
+    #    for fmt in ('%#m/%#d/%Y', '%#m/%#d/%y'):
+    #        try:
+    #            start_date = datetime.strptime(start_date_str, fmt)
+    #            parsed = True
+    #            break
+    #        except ValueError:
+    #            pass
+    #if not parsed:
+    #    raise ValueError(f"Could not parse date string: {start_date_str}")
+    # end of remove
 
     # Adjust start date to the correct day of the week if needed
     start_day_of_week = start_date.isoweekday() + 1 if start_date.isoweekday() != 7 else 8 # Monday is 2, Sunday is 8
@@ -151,10 +151,38 @@ if df is not None:
     my_list_2['active_weeks'] = my_list_2['Tuần học'].apply(parse_week_pattern)
     my_list_2['class_dates'] = my_list_2.apply(lambda row: get_dates_for_pattern(row['Ngày bắt đầu'], row['Thứ'], row['active_weeks']), axis=1)
 
+    # Create an empty list to store the expanded schedule data
+schedule_data = []
+
+# Iterate through each row in the original DataFrame (my_list_2)
+for index, row in my_list_2.iterrows():
+    # For each date in the 'class_dates' list for this row
+    for class_date in row['class_dates']:
+        # Create a new row for the expanded schedule
+        new_row = {
+            'STT': row['STT'],
+            'Mã lớp học phần': row['Mã lớp học phần'],
+            'Nhóm': row['Nhóm'],
+            'Lớp': row['Lớp'],
+            'Tên môn học': row['Tên môn học'],
+            'Sỉ số': row['Sỉ số'],
+            'Thứ': row['Thứ'],
+            'Từ tiết': row['Từ tiết'],
+            'Đến tiết': row['Đến tiết'],
+            'Tiết học': row['Tiết học'],
+            'Tên phòng': row['Tên phòng'],
+            'Ngày': class_date # Add the specific date for this class session
+        }
+        # Append the new row to the schedule_data list
+        schedule_data.append(new_row)
+
+# Create the new DataFrame from the list of dictionaries
+my_schedule = pd.DataFrame(schedule_data)
+
     # Download section
     st.subheader("📥 Download Google Calendar")
     file_base = uploaded.name.rsplit(".", 1)[0] if uploaded else "data"
-    csv_bytes = my_list_2.to_csv(index=False).encode("utf_8_sig")
+    csv_bytes = my_schedule.to_csv(index=False).encode("utf_8_sig")
     st.download_button(
         label="Download my_google.csv",
         data=csv_bytes,
