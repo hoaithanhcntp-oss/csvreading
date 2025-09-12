@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 import sys
 
 
-st.set_page_config(page_title="Upload Excel/CSV → Download CSV", page_icon="📤", layout="wide")
-st.title("📤 Upload Excel/CSV → 📥 Download CSV")
+st.set_page_config(page_title="Import EGOV schedule to Google calendar", page_icon="📤", layout="wide")
+st.title("📤 Upload schedule → 📥 Download google calendar")
 st.caption("Minimal app: upload a .csv / .xlsx / .xls and download as CSV.")
 
 def _read_csv(file) -> pd.DataFrame:
@@ -272,5 +272,7 @@ if df is not None:
 else:
     st.info("Upload a file to begin.")
     
+st.info("---")
+st.info("© Copyright by **Trinh Hoai Thanh**")
 st.markdown("---")
 st.caption("© Copyright by **Trinh Hoai Thanh**")
