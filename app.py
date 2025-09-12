@@ -12,11 +12,11 @@ st.caption("Minimal app: upload a .csv / .xlsx / .xls and download as CSV.")
 def _read_csv(file) -> pd.DataFrame:
     # Try UTF-8 first; fallback to latin-1; else let pandas sniff the separator.
     try:
-        return pd.read_csv(file)
+        return pd.read_csv(file,skiprows=12)
     except UnicodeDecodeError:
         file.seek(0)
         try:
-            return pd.read_csv(file, encoding="latin-1")
+            return pd.read_csv(file, skiprows=12, encoding="latin-1")
         except Exception:
             file.seek(0)
             return pd.read_csv(file, sep=None, engine="python")
@@ -87,7 +87,7 @@ if df is not None:
     file_base = uploaded.name.rsplit(".", 1)[0] if uploaded else "data"
     csv_bytes = df.to_csv(index=False).encode("utf-8")
     st.download_button(
-        label="Download CSV",
+        label="Download my_google.csv",
         data=csv_bytes,
         file_name=f"{file_base}.csv",
         mime="text/csv",
