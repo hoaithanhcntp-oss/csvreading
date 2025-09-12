@@ -152,32 +152,32 @@ if df is not None:
     my_list_2['class_dates'] = my_list_2.apply(lambda row: get_dates_for_pattern(row['Ngày bắt đầu'], row['Thứ'], row['active_weeks']), axis=1)
 
     # Create an empty list to store the expanded schedule data
-schedule_data = []
+    schedule_data = []
 
-# Iterate through each row in the original DataFrame (my_list_2)
-for index, row in my_list_2.iterrows():
-    # For each date in the 'class_dates' list for this row
-    for class_date in row['class_dates']:
-        # Create a new row for the expanded schedule
-        new_row = {
-            'STT': row['STT'],
-            'Mã lớp học phần': row['Mã lớp học phần'],
-            'Nhóm': row['Nhóm'],
-            'Lớp': row['Lớp'],
-            'Tên môn học': row['Tên môn học'],
-            'Sỉ số': row['Sỉ số'],
-            'Thứ': row['Thứ'],
-            'Từ tiết': row['Từ tiết'],
-            'Đến tiết': row['Đến tiết'],
-            'Tiết học': row['Tiết học'],
-            'Tên phòng': row['Tên phòng'],
-            'Ngày': class_date # Add the specific date for this class session
-        }
-        # Append the new row to the schedule_data list
-        schedule_data.append(new_row)
+    # Iterate through each row in the original DataFrame (my_list_2)
+    for index, row in my_list_2.iterrows():
+        # For each date in the 'class_dates' list for this row
+        for class_date in row['class_dates']:
+            # Create a new row for the expanded schedule
+            new_row = {
+                'STT': row['STT'],
+                'Mã lớp học phần': row['Mã lớp học phần'],
+                'Nhóm': row['Nhóm'],
+                'Lớp': row['Lớp'],
+                'Tên môn học': row['Tên môn học'],
+                'Sỉ số': row['Sỉ số'],
+                'Thứ': row['Thứ'],
+                'Từ tiết': row['Từ tiết'],
+                'Đến tiết': row['Đến tiết'],
+                'Tiết học': row['Tiết học'],
+                'Tên phòng': row['Tên phòng'],
+                'Ngày': class_date # Add the specific date for this class session
+            }
+            # Append the new row to the schedule_data list
+            schedule_data.append(new_row)
 
-# Create the new DataFrame from the list of dictionaries
-my_schedule = pd.DataFrame(schedule_data)
+    # Create the new DataFrame from the list of dictionaries
+    my_schedule = pd.DataFrame(schedule_data)
 
     # Download section
     st.subheader("📥 Download Google Calendar")
