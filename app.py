@@ -80,16 +80,17 @@ if uploaded:
 df = st.session_state.df
 
 if df is not None:
-    st.subheader("👀 Preview")
+    st.subheader("👀 Your EGOV Schedule")
     st.dataframe(df, use_container_width=True)
 
-    st.subheader("📥 Download CSV")
+    st.subheader("📥 Download Google Calendar")
     file_base = uploaded.name.rsplit(".", 1)[0] if uploaded else "data"
-    csv_bytes = df.to_csv(index=False).encode("utf-8")
+    csv_bytes = df.to_csv(index=False).encode("utf_8_sig")
     st.download_button(
         label="Download my_google.csv",
         data=csv_bytes,
-        file_name=f"{file_base}.csv",
+        #file_name=f"{file_base}.csv",
+        file_name=f"my_google.csv",
         mime="text/csv",
     )
 else:
