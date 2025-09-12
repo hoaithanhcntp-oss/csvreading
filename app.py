@@ -7,11 +7,18 @@ import streamlit as st
 from datetime import datetime, timedelta
 import sys
 
-
+# set up the webpage
 st.set_page_config(page_title="Import EGOV schedule to Google calendar", page_icon="📤", layout="wide")
 st.title("📤 Upload schedule → 📥 Download google calendar")
 st.caption("Hướng dẫn: upload file lịch của trường theo học kỳ và download về file csv để import vào google calendar.")
-
+with st.expander("Need help?"):
+    st.write("""
+    1. Upload your CSV or Excel file.  
+    2. If the file has extra header rows, adjust 'Skip rows'.  
+    3. Preview the data in the main panel.  
+    4. Click 'Download CSV' to save the cleaned file.
+    """)
+    
 def _read_csv(file) -> pd.DataFrame:
     # Try UTF-8 first; fallback to latin-1; else let pandas sniff the separator.
     try:
