@@ -231,7 +231,7 @@ if df is not None:
     # Check practice or lecture session
     my_schedule['IsPractice'] = 0
     my_schedule.loc[my_schedule['Tên môn học'].str.contains('Thực hành', na=False), 'IsPractice'] = 1
-    my_schedule.loc[my_schedule['Tên môn học'].str.contains('Ứng dụng tin học', na=False), 'IsPractice'] = 1
+    #my_schedule.loc[my_schedule['Tên môn học'].str.contains('Ứng dụng tin học', na=False), 'IsPractice'] = 1
     # Convert 'Từ tiết' to 'From_time' and 'Đến tiết' to 'End_time' based on 'IsPractice'
 
     # Convert to Start time and End time
