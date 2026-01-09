@@ -98,45 +98,44 @@ def get_dates_for_pattern(start_date_str, day_of_week, active_weeks):
 
 # Lecture sessions (with 25-min breaks after session 3 and 9)
 lecture_array = [
-    ("07:00", "07:45"),  # Session 1
-    ("07:45", "08:30"),  # Session 2
-    ("08:30", "09:15"),  # Session 3
-    ("09:40", "10:25"),  # Session 4
-    ("10:25", "11:10"),  # Session 5
-    ("11:10", "11:55"),  # Session 6
-    ("12:30", "13:15"),  # Session 7 (fixed start reset)
-    ("13:15", "14:00"),  # Session 8
-    ("14:00", "14:45"),  # Session 9
-    ("15:10", "15:55"),  # Session 10
-    ("15:55", "16:40"),  # Session 11
-    ("16:40", "17:25"),  # Session 12
-    ("18:00", "18:45"),  # Session 13 (fixed start reset)
-    ("18:45", "19:30"),  # Session 14
-    ("19:30", "20:15"),  # Session 15
-    ("20:15", "21:00"),  # Session 16
-    ("21:00", "21:45")   # Session 17
+    ("06:30", "07:20"),  # Session 1
+    ("07:20", "08:10"),  # Session 2
+    ("08:10", "09:00"),  # Session 3
+    ("09:30", "10:20"),  # Session 4
+    ("10:20", "11:10"),  # Session 5
+    ("11:10", "12:00"),  # Session 6
+    ("12:30", "13:20"),  # Session 7 (fixed start reset)
+    ("13:20", "14:10"),  # Session 8
+    ("14:10", "15:00"),  # Session 9
+    ("15:30", "16:20"),  # Session 10
+    ("16:20", "17:10"),  # Session 11
+    ("17:10", "18:00"),  # Session 12
+    ("18:10", "19:00"),  # Session 13 (fixed start reset)
+    ("19:00", "19:50"),  # Session 14
+    ("19:50", "20:40"),  # Session 15
+    ("20:40", "21:30"),  # Session 16
+    ("21:30", "22:20")   # Session 17
 ]
 
 
 # Practice sessions (no breaks)
 practice_array = [
-    ("07:00", "07:45"),  # Session 1
-    ("07:45", "08:30"),  # Session 2
-    ("08:30", "09:15"),  # Session 3
-    ("09:15", "10:00"),  # Session 4
-    ("10:00", "10:45"),  # Session 5
-    ("10:45", "11:30"),  # Session 6
-    ("12:30", "13:15"),  # Session 7 (reset start)
-    ("13:15", "14:00"),  # Session 8
-    ("14:00", "14:45"),  # Session 9
-    ("14:45", "15:30"),  # Session 10
-    ("15:30", "16:15"),  # Session 11
-    ("16:15", "17:00"),  # Session 12
-    ("18:00", "18:45"),  # Session 13 (reset start)
-    ("18:45", "19:30"),  # Session 14
-    ("19:30", "20:15"),  # Session 15
-    ("20:15", "21:00"),  # Session 16
-    ("21:00", "21:45")   # Session 17
+    ("07:00", "07:50"),  # Session 1
+    ("07:50", "08:40"),  # Session 2
+    ("08:40", "09:30"),  # Session 3
+    ("09:30", "10:20"),  # Session 4
+    ("10:20", "11:10"),  # Session 5
+    ("11:10", "12:00"),  # Session 6
+    ("12:30", "13:20"),  # Session 7 (reset start)
+    ("13:20", "14:10"),  # Session 8
+    ("14:10", "15:00"),  # Session 9
+    ("15:00", "15:50"),  # Session 10
+    ("15:50", "16:40"),  # Session 11
+    ("16:40", "17:30"),  # Session 12
+    ("18:00", "18:50"),  # Session 13 (reset start)
+    ("18:50", "19:40"),  # Session 14
+    ("19:40", "20:30"),  # Session 15
+    ("20:30", "21:20"),  # Session 16
 ]
 
 uploaded = st.file_uploader(
