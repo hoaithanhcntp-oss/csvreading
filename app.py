@@ -3,6 +3,7 @@ from typing import Optional, List
 
 import pandas as pd
 import streamlit as st
+import numpy as np
 
 from datetime import datetime, timedelta
 import sys
@@ -232,6 +233,11 @@ if df is not None:
     my_schedule['IsPractice'] = 0
     my_schedule.loc[my_schedule['Tên môn học'].str.contains('Thực hành', na=False), 'IsPractice'] = 1
     #my_schedule.loc[my_schedule['Tên môn học'].str.contains('Ứng dụng tin học', na=False), 'IsPractice'] = 1
+
+    # Check schedule is online or offline
+    my_schedule['IsOnline'] = 0
+    my_schedule.loc[my_schedule['Tên phòng'].str.contains('Zoom', na=False), 'IsOnline'] = 1
+
     # Convert 'Từ tiết' to 'From_time' and 'Đến tiết' to 'End_time' based on 'IsPractice'
 
     # Convert to Start time and End time
@@ -241,8 +247,9 @@ if df is not None:
     # Create the my_google dataframe
     my_google = pd.DataFrame()
 
-    # Create the 'Subject' column by combining 'Tên môn học' and 'Mã lớp học phần'
-    my_google['Subject'] = my_schedule['Tên môn học'] + ' - ' + my_schedule['Mã lớp học phần'].astype(str) + ' - ' + my_schedule['Lớp']
+    # Create the 'Subject' column by combining 'Tên môn học' and 'Mã lớp học phần' and Status online or not
+    base_subject = my_schedule['Tên môn học'] + ' - ' + my_schedule['Mã lớp học phần'].astype(str) + ' - ' + my_schedule['Lớp']
+    my_google['Subject'] = np.where(my_schedule['IsOnline'] == 1, '(Online) ' + base_subject, base_subject)
 
     # Create the 'Start Date' column from the 'Ngày' column
     my_google['Start Date'] = my_schedule['Ngày'].dt.strftime('%m/%d/%Y')
