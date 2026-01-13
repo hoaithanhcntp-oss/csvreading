@@ -267,7 +267,8 @@ if df is not None:
 
     # Convert 'Start Date' column to datetime objects
     my_google['Start Date'] = pd.to_datetime(my_google['Start Date'], format='%m/%d/%Y').dt.date
-
+    my_google['End Date'] = my_google['Start Date']
+    
     # Filter the DataFrame to keep only rows with 'Start Date' on or after today
     my_google = my_google[my_google['Start Date'] >= today]
 
